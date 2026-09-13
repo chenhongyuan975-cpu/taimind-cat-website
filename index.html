@@ -892,6 +892,25 @@
     }
 
     /* ==========================================================================
+       8.5 留言板
+       ========================================================================== */
+    .messages {
+      background: rgba(245, 238, 230, 0.65);
+    }
+
+    .messages-panel {
+      overflow: hidden;
+      padding: var(--space-3);
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .messages-panel .utterances {
+      max-width: 100%;
+    }
+    /* ==========================================================================
        9. 页脚
        ========================================================================== */
     .site-footer {
@@ -1218,6 +1237,7 @@
         <a class="nav-link is-active" href="#hero">首页</a>
         <a class="nav-link" href="#cats">猫咪分类</a>
         <a class="nav-link" href="#guide">饲养攻略</a>
+        <a class="nav-link" href="#messages">留言板</a>
         <a class="nav-link" href="#consult">咨询预约</a>
         <a class="nav-link nav-cta" href="#consult">立即预约</a>
       </div>
@@ -1298,6 +1318,28 @@
     </section>
 
     <!-- 咨询表单 -->
+    <!-- 留言板：由 utterances 写入 GitHub Issues，便于后台查看与管理 -->
+    <section class="section messages" id="messages">
+      <div class="container">
+        <header class="section-heading is-centered reveal">
+          <p class="eyebrow">Guestbook</p>
+          <h2 class="section-title">猫咪留言板</h2>
+          <p class="section-lead">留下你的猫咪故事、疑问或祝福。留言会保存到 GitHub Issues，也可在管理后台集中查看。</p>
+        </header>
+
+        <div class="messages-panel reveal">
+          <script src="https://utteranc.es/client.js"
+                  repo="chenhongyuan975-cpu/taimind-cat-website"
+                  issue-term="pathname"
+                  label="留言"
+                  theme="preferred-color-scheme"
+                  crossorigin="anonymous"
+                  async>
+          </script>
+        </div>
+      </div>
+    </section>
+
     <section class="section consult" id="consult">
       <div class="container">
         <div class="consult-wrap">
@@ -1396,6 +1438,7 @@
             <li><a href="#hero">首页</a></li>
             <li><a href="#cats">猫咪分类</a></li>
             <li><a href="#guide">饲养攻略</a></li>
+            <li><a href="#messages">留言板</a></li>
             <li><a href="#consult">咨询预约</a></li>
           </ul>
         </div>
@@ -1659,7 +1702,7 @@
       }
 
       function highlightNav() {
-        const sections = ["hero", "cats", "guide", "consult"].map((id) => document.getElementById(id));
+        const sections = ["hero", "cats", "guide", "messages", "consult"].map((id) => document.getElementById(id));
         const marker = window.scrollY + 160;
         let activeId = "hero";
 
