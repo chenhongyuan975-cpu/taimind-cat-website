@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#fbf8f3">
+  <meta name="robots" content="noindex">
+  <title>留言管理后台 · Taimind 猫咪生活馆</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+
+  <style>
+    :root {
+      --bg: #fbf8f3;
+      --surface: #ffffff;
+      --ink: #3b312b;
+      --muted: #8b7c70;
+      --primary: #b98a62;
+      --primary-deep: #966d4c;
+      --border: rgba(80, 61, 45, 0.12);
+      --sage: #4b6c60;
+      --warning: #b96d62;
+      --shadow: 0 12px 32px rgba(74, 55, 38, 0.1);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 0%, rgba(216, 180, 140, 0.2), transparent 26rem),
+        var(--bg);
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.7;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .page {
+      width: min(100% - 2.5rem, 1040px);
+      margin-inline: auto;
+      padding-block: 2.5rem 4rem;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: "Noto Serif SC", serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(145deg, #d8b48c, var(--primary-deep));
+      border-radius: var(--radius);
+    }
+
+    .brand-mark svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .search {
+      flex: 1 1 220px;
+      min-height: 42px;
+      padding: 0.6rem 0.8rem;
+      color: var(--ink);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    .search:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(185, 138, 98, 0.12);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      min-height: 42px;
+      padding: 0.55rem 0.9rem;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      background: var(--primary);
+      color: #fff;
+      cursor: pointer;
+      transition: background 180ms ease, transform 180ms ease;
+    }
+
+    .btn:hover {
+      background: var(--primary-deep);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      color: var(--primary-deep);
+      background: transparent;
+      border-color: rgba(150, 109, 76, 0.24);
+    }
+
+    .btn svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat {
+      padding: 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 22px rgba(74, 55, 38, 0.06);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .stat-value {
+      margin-top: 0.2rem;
+      font-family: "Noto Serif SC", serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .message {
+      padding: 1.1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 22px rgba(74, 55, 38, 0.06);
+    }
+
+    .message-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+
+    .avatar {
+      flex: 0 0 auto;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(185, 138, 98, 0.18);
+    }
+
+    .user-name {
+      font-weight: 700;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .time {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+
+    .message-body {
+      margin: 0;
+      color: var(--ink);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .message-actions {
+      margin-top: 0.75rem;
+    }
+
+    .message-actions a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      color: var(--primary-deep);
+      font-size: 0.86rem;
+    }
+
+    .message-actions svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .state {
+      display: grid;
+      padding: 3rem 1rem;
+      place-items: center;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .state svg {
+      width: 28px;
+      height: 28px;
+      margin-bottom: 0.5rem;
+      color: var(--primary);
+    }
+
+    .footer-note {
+      margin-top: 2rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .message-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="topbar">
+      <a class="brand" href="./">
+        <span class="brand-mark"><i data-lucide="paw-print"></i></span>
+        <span>留言管理后台</span>
+      </a>
+      <a class="btn btn-ghost" href="https://github.com/chenhongyuan975-cpu/taimind-cat-website/issues" target="_blank" rel="noreferrer">
+        <i data-lucide="github"></i>
+        在 GitHub Issues 管理
+      </a>
+    </header>
+
+    <section class="toolbar" aria-label="留言筛选">
+      <input class="search" id="searchInput" type="search" placeholder="搜索昵称或留言内容">
+      <button class="btn" id="refreshBtn" type="button">
+        <i data-lucide="refresh-cw"></i>
+        刷新
+      </button>
+    </section>
+
+    <section class="stats" aria-label="留言统计">
+      <div class="stat">
+        <div class="stat-label">留言总数</div>
+        <div class="stat-value" id="totalCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">参与人数</div>
+        <div class="stat-value" id="userCount">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">最近留言</div>
+        <div class="stat-value" id="latestTime" style="font-size: 1rem; padding-top: 0.5rem;">暂无</div>
+      </div>
+    </section>
+
+    <section class="list" id="messageList" aria-live="polite"></section>
+
+    <p class="footer-note">留言由 utterances 自动保存为 GitHub Issues，本页只读取公开留言内容。</p>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const owner = "chenhongyuan975-cpu";
+      const repo = "taimind-cat-website";
+      const apiBase = `https://api.github.com/repos/${owner}/${repo}`;
+      const list = document.getElementById("messageList");
+      const totalCount = document.getElementById("totalCount");
+      const userCount = document.getElementById("userCount");
+      const latestTime = document.getElementById("latestTime");
+      const searchInput = document.getElementById("searchInput");
+      const refreshBtn = document.getElementById("refreshBtn");
+
+      let allMessages = [];
+
+      function escapeHtml(value) {
+        return value.replace(/[&<>"']/g, (char) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[char]);
+      }
+
+      function formatTime(value) {
+        return new Intl.DateTimeFormat("zh-CN", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        }).format(new Date(value));
+      }
+
+      async function fetchJson(url) {
+        const response = await fetch(url, {
+          headers: {
+            Accept: "application/vnd.github+json",
+            "X-GitHub-Api-Version": "2022-11-28"
+          }
+        });
+        if (!response.ok) {
+          throw new Error(`请求失败：${response.status}`);
+        }
+        return response.json();
+      }
+
+      async function loadMessages() {
+        list.innerHTML = `
+          <div class="state">
+            <i data-lucide="loader-circle"></i>
+            正在读取留言...
+          </div>
+        `;
+        window.lucide?.createIcons();
+
+        try {
+          const issues = await fetchJson(`${apiBase}/issues?state=all&per_page=100`);
+          const messageJobs = issues
+            .filter((issue) => !issue.pull_request)
+            .map(async (issue) => {
+              const comments = await fetchJson(issue.comments_url);
+              const pieces = [];
+
+              if (issue.body && issue.body.trim()) {
+                pieces.push({
+                  user: issue.user,
+                  createdAt: issue.created_at,
+                  body: issue.body,
+                  issueNumber: issue.number,
+                  issueTitle: issue.title,
+                  htmlUrl: issue.html_url
+                });
+              }
+
+              comments.forEach((comment) => {
+                pieces.push({
+                  user: comment.user,
+                  createdAt: comment.created_at,
+                  body: comment.body,
+                  issueNumber: issue.number,
+                  issueTitle: issue.title,
+                  htmlUrl: comment.html_url
+                });
+              });
+
+              return pieces;
+            });
+
+          const grouped = await Promise.all(messageJobs);
+          allMessages = grouped.flat().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          renderMessages();
+        } catch (error) {
+          list.innerHTML = `
+            <div class="state">
+              <i data-lucide="cloud-alert"></i>
+              ${escapeHtml(error.message)}
+            </div>
+          `;
+          window.lucide?.createIcons();
+        }
+      }
+
+      function renderMessages() {
+        const keyword = searchInput.value.trim().toLowerCase();
+        const messages = allMessages.filter((item) => {
+          const haystack = `${item.user?.login || ""} ${item.body}`.toLowerCase();
+          return haystack.includes(keyword);
+        });
+
+        totalCount.textContent = String(allMessages.length);
+        userCount.textContent = String(new Set(allMessages.map((item) => item.user?.login).filter(Boolean)).size);
+        latestTime.textContent = allMessages[0] ? formatTime(allMessages[0].createdAt) : "暂无";
+
+        if (!messages.length) {
+          list.innerHTML = `
+            <div class="state">
+              <i data-lucide="inbox"></i>
+              暂无留言
+            </div>
+          `;
+          window.lucide?.createIcons();
+          return;
+        }
+
+        list.innerHTML = messages.map((item) => `
+          <article class="message">
+            <div class="message-head">
+              <div class="user">
+                <img class="avatar" src="${escapeHtml(item.user?.avatar_url || "")}" alt="">
+                <span class="user-name">${escapeHtml(item.user?.login || "匿名用户")}</span>
+              </div>
+              <time class="time" datetime="${item.createdAt}">${formatTime(item.createdAt)}</time>
+            </div>
+            <p class="message-body">${escapeHtml(item.body)}</p>
+            <div class="message-actions">
+              <a href="${escapeHtml(item.htmlUrl)}" target="_blank" rel="noreferrer">
+                <i data-lucide="external-link"></i>
+                查看原始留言
+              </a>
+            </div>
+          </article>
+        `).join("");
+
+        window.lucide?.createIcons();
+      }
+
+      searchInput.addEventListener("input", renderMessages);
+      refreshBtn.addEventListener("click", loadMessages);
+
+      loadMessages();
+    })();
+  </script>
+</body>
+</html>
